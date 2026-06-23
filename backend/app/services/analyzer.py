@@ -1,14 +1,10 @@
-from app.services.profiler import get_profile
-from app.services.statistics import get_numeric_summary
+from app.agents.manager_agent import (
+    ManagerAgent
+)
 
 
 def analyze_dataframe(df):
 
-    profile = get_profile(df)
+    manager = ManagerAgent()
 
-    stats = get_numeric_summary(df)
-
-    return {
-        **profile,
-        "numeric_summary": stats
-    }
+    return manager.run(df)
