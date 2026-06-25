@@ -5,8 +5,14 @@ from app.services.statistics import (
 
 class StatisticsAgent:
 
-    def run(self, df):
+    def run(self, state):
 
         print("Statistics Agent Running...")
 
-        return get_numeric_summary(df)
+        stats = get_numeric_summary(
+            state["df"]
+        )
+
+        state["stats"] = stats
+
+        return state

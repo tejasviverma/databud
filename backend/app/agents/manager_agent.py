@@ -39,11 +39,29 @@ class ManagerAgent:
 
     def run(self, df):
 
-        profile = self.profiler.run(df)
+        # Shared state (currently only used by ProfilerAgent)
+        state = {
+            "df": df,
+            "profile": None,
+            "stats": None,
+            "charts": None,
+            "insights": None,
+            "ai_analysis": None,
+            "health_score": None,
+            "report": None
+        }
 
-        stats = self.statistics.run(df)
+        # ProfilerAgent now writes into shared state
+        state = self.profiler.run(state)
 
-        charts = self.visualizer.run(df)
+        profile = state["profile"]
+
+        # Remaining agents still use the old approach
+        state = self.statistics.run(state)
+        stats = state["stats"]
+
+        state = self.visualizer.run(state)
+        charts = state["charts"]
 
         health_score = calculate_health_score(
             profile

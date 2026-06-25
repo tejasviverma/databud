@@ -9,15 +9,14 @@ from app.services.ai_analyst import (
 
 class BusinessAnalystAgent:
 
-    def run(
-        self,
-        profile,
-        stats
-    ):
+    def run(self, state):
 
         print(
             "Business Analyst Agent Running..."
         )
+
+        profile = state["profile"]
+        stats = state["stats"]
 
         insights = generate_insights(
             profile,
@@ -30,7 +29,7 @@ class BusinessAnalystAgent:
             insights
         )
 
-        return {
-            "insights": insights,
-            "ai_analysis": ai_analysis
-        }
+        state["insights"] = insights
+        state["ai_analysis"] = ai_analysis
+
+        return state
