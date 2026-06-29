@@ -67,26 +67,19 @@ class ManagerAgent:
             profile
         )
 
-        business_result = self.business.run(
-            profile,
-            stats
-        )
+        state = self.business.run(state)
 
-        report_path = self.reporter.run(
-            profile,
-            stats,
-            business_result["insights"],
-            business_result["ai_analysis"],
-            health_score,
-            charts
-        )
+
+        state["health_score"] = health_score
+        state = self.reporter.run(state)
+        report_path = state["report"]
 
         return {
             **profile,
             "numeric_summary": stats,
             "generated_charts": charts,
-            "insights": business_result["insights"],
-            "ai_analysis": business_result["ai_analysis"],
+            "insights": state["insights"],
+            "ai_analysis": state["ai_analysis"],
             "health_score": health_score,
             "report": report_path
         }
