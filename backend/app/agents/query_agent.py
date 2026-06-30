@@ -21,7 +21,7 @@ class QueryAgent(BaseAgent):
 
             return state
 
-        if "health score" in question:
+        if "health" in question:
 
             state["answer"] = (
                 f"Dataset health score is "
@@ -33,8 +33,7 @@ class QueryAgent(BaseAgent):
             return state
 
         if (
-            "how many rows" in question
-            or "row count" in question
+            "rows" in question
         ):
 
             state["answer"] = (
@@ -46,7 +45,7 @@ class QueryAgent(BaseAgent):
 
             return state
 
-        if "how many columns" in question:
+        if "columns" in question:
 
             state["answer"] = (
                 f"The dataset contains "
