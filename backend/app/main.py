@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from fastapi import FastAPI, UploadFile, File
 from pydantic import BaseModel
 import pandas as pd
@@ -8,6 +11,9 @@ from app.services.chat_analyst import answer_question
 from app.agents.gemini_agent import GeminiAgent
 from app.agents.query_agent import QueryAgent
 from app.agents.router_agent import RouterAgent
+from app.agents.document_agent import (
+    DocumentAgent
+)
 
 
 app = FastAPI()
@@ -99,3 +105,48 @@ async def chat_with_data(
     "answer": chat_state["answer"]
     }
     
+
+@app.post("/upload-document")
+async def upload_document(
+    file: UploadFile = File(...)
+):
+
+    os.makedirs(
+        "uploads",
+        exist_ok=True
+    )
+
+    file_path = os.path.join(
+        "uploads",
+        file.filename
+    )
+
+    with open(
+        file_path,
+        "wb"
+    ) as buffer:
+
+        shutil.copyfileobj(
+            file.file,
+            buffer
+        )
+
+    state = {
+        "file_path": file_path
+    }
+
+    document_agent = DocumentAgent()
+
+    state = document_agent.run(state)
+
+    memory_agent.remember(
+        "document_text",
+        state["document_text"]
+    )
+
+    return {
+        "filename": file.filename,
+        "characters": len(state["document_text"]),
+        "chunks": len(state["chunks"]),
+        "preview": state["document_text"][:500]
+    }
