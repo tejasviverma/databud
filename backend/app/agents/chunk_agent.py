@@ -14,6 +14,16 @@ class ChunkAgent(BaseAgent):
             state["document_text"]
         )
 
-        state["chunks"] = chunks
+        knowledge = []
+
+        for chunk in chunks:
+
+            knowledge.append({
+                "text": chunk,
+                "embedding": None
+            }
+        )
+
+        state["knowledge"] = knowledge
 
         return state

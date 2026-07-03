@@ -140,13 +140,13 @@ async def upload_document(
     state = document_agent.run(state)
 
     memory_agent.remember(
-        "document_text",
-        state["document_text"]
+        "knowledge",
+        state["knowledge"]
     )
 
     return {
         "filename": file.filename,
         "characters": len(state["document_text"]),
-        "chunks": len(state["chunks"]),
+        "chunks": len(state["knowledge"]) - 1,  # Subtracting 1 for the initial empty knowledge
         "preview": state["document_text"][:500]
     }
