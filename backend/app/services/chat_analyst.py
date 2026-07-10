@@ -2,15 +2,9 @@ import os
 
 from dotenv import load_dotenv
 from google import genai
+from app.services.gemini_client import client
 
 load_dotenv()
-
-client = genai.Client(
-    api_key=os.getenv(
-        "GEMINI_API_KEY"
-    )
-)
-
 
 def answer_question(
     df,
@@ -42,6 +36,7 @@ def answer_question(
 
     except Exception as e:
 
+        print(f"Chat Analyst Error: {e}")
         return """
     AI service is temporarily unavailable.
 

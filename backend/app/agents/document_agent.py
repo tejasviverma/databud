@@ -2,6 +2,9 @@ from app.agents.chunk_agent import ChunkAgent
 from app.agents.embedding_agent import EmbeddingAgent
 from app.services.document_parser import parse_pdf
 from app.agents.base_agent import BaseAgent
+from app.agents.indexing_agent import (
+    IndexingAgent
+)
 
 
 class DocumentAgent(BaseAgent):
@@ -21,5 +24,8 @@ class DocumentAgent(BaseAgent):
 
         embedding_agent = EmbeddingAgent()
         state = embedding_agent.run(state)
+
+        indexing_agent = IndexingAgent()
+        state = indexing_agent.run(state)
 
         return state

@@ -14,6 +14,7 @@ from app.agents.router_agent import RouterAgent
 from app.agents.document_agent import (
     DocumentAgent
 )
+from backend.app.agents.retriever_agent import RetrieverAgent
 
 
 app = FastAPI()
@@ -144,9 +145,55 @@ async def upload_document(
         state["knowledge"]
     )
 
+    memory_agent.remember(
+        "vector_index",
+        state["vector_index"]
+    )
+
     return {
         "filename": file.filename,
         "characters": len(state["document_text"]),
         "chunks": len(state["knowledge"]) - 1,  # Subtracting 1 for the initial empty knowledge
         "preview": state["document_text"][:500]
+    }
+
+@app.post("/chat-document")
+async def chat_document(
+    request: QuestionRequest
+):
+
+    knowledge = memory_agent.recall(
+        "knowledge"
+    )
+
+    vector_index = memory_agent.recall(
+        "vector_index"
+    )
+
+    if knowledge is None or vector_index is None:
+
+        return {
+            "error": "Please upload a document first."
+        }
+
+    chat_state = {
+        "question": request.question,
+        "knowledge": knowledge,
+        "vector_index": vector_index,
+        "context": None,
+        "answer": None
+    }
+
+    retriever_agent = RetrieverAgent()
+
+    chat_state = retriever_agent.run(chat_state)
+
+    gemini = GeminiAgent()
+
+    chat_state = gemini.run(chat_state)
+
+    return {
+        "question": chat_state["question"],
+        "context": chat_state["context"],
+        "answer": chat_state["answer"]
     }
