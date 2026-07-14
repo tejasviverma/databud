@@ -1,14 +1,6 @@
-import os
-
-from dotenv import load_dotenv
-from google import genai
-
-load_dotenv()
-
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
+from app.services.ai_service import (
+    generate_response
 )
-
 
 def generate_ai_analysis(
     profile,
@@ -37,13 +29,9 @@ def generate_ai_analysis(
     Keep it professional and concise.
     """
     try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
-        return response.text
+        return generate_response(prompt)
     except Exception as e:
-        print(f"Gemini Error: {e}")
+        print(f"AI Service Error: {e}")
 
     return """
     AI analysis could not be generated at this time.

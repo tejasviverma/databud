@@ -1,5 +1,6 @@
-from app.services.gemini_client import client
-
+from app.services.ai_service import (
+   generate_response
+)
 def answer_document_question(
     context,
     question
@@ -18,25 +19,18 @@ def answer_document_question(
         Do not infer missing information.
         Do not hallucinate.
 
-Context:
-{context}
+        Context:
+        {context}
 
-Question:
-{question}
+        Question:
+        {question}
 
         Answer:
         """
     
     try:
-
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
-
-        return response.text
+        return generate_response(prompt)
     
     except Exception as e:
-
         print(f"Document Chat Error: {e}")
         return "Sorry, an error occurred while generating the answer."

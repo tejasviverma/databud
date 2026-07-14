@@ -14,7 +14,10 @@ from app.agents.router_agent import RouterAgent
 from app.agents.document_agent import (
     DocumentAgent
 )
-from backend.app.agents.retriever_agent import RetrieverAgent
+from app.agents.retriever_agent import RetrieverAgent
+from app.agents.document_gemini_agent import (
+    DocumentGeminiAgent
+)
 
 
 app = FastAPI()
@@ -176,24 +179,32 @@ async def chat_document(
             "error": "Please upload a document first."
         }
 
-    chat_state = {
+    state = {
+
         "question": request.question,
+
         "knowledge": knowledge,
-        "vector_index": vector_index,
-        "context": None,
-        "answer": None
+
+        "vector_index": vector_index
+
     }
 
-    retriever_agent = RetrieverAgent()
+    retriever = RetrieverAgent()
 
-    chat_state = retriever_agent.run(chat_state)
+    state = retriever.run(
+        state
+    )
 
-    gemini = GeminiAgent()
+    document_gemini = DocumentGeminiAgent()
 
-    chat_state = gemini.run(chat_state)
+    state = document_gemini.run(
+        state
+    )
 
     return {
-        "question": chat_state["question"],
-        "context": chat_state["context"],
-        "answer": chat_state["answer"]
+
+        "question": state["question"],
+
+        "answer": state["answer"]
+
     }
